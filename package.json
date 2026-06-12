@@ -1,0 +1,13 @@
+{
+  "name": "infiniteboards",
+  "version": "11.0.0",
+  "private": true,
+  "type": "module",
+  "description": "InfiniteBoards - file-backed markdown note canvas",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,916 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+#viewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #fff;
+  cursor: text;
+  touch-action: none;
+  user-select: none;
+}
+
+#viewport.is-panning {
+  cursor: grabbing;
+}
+
+#viewport.is-selecting {
+  cursor: crosshair;
+}
+
+#viewport.is-moving-selection {
+  cursor: grabbing;
+}
+
+#viewport.is-transforming-image {
+  cursor: grabbing;
+}
+
+#paper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+#paper::before {
+  content: "";
+  position: absolute;
+  left: -100000px;
+  top: -100000px;
+  width: 200000px;
+  height: 200000px;
+  pointer-events: none;
+}
+
+.selection-box {
+  position: fixed;
+  z-index: 15;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: 1px solid #3478f6;
+  background: rgb(52 120 246 / 10%);
+  pointer-events: none;
+}
+
+.selection-box[hidden] {
+  display: none;
+}
+
+.paste-status {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 25;
+  padding: 6px 9px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 12%);
+  font: 12px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  pointer-events: none;
+}
+
+.paste-status.is-error {
+  border-color: #e3a4a4;
+  color: #9b1c1c;
+}
+
+.paste-status[hidden] {
+  display: none;
+}
+
+::highlight(find-active) {
+  background: #f4d84e;
+  color: #111;
+}
+
+::highlight(app-spell-error) {
+  text-decoration: underline wavy #d93025;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.spelling-bubble {
+  position: fixed;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: min(520px, calc(100vw - 16px));
+  padding: 6px;
+  border: 1px solid #d8d8d8;
+  border-radius: 7px;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 18%);
+  font: 14px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: default;
+  user-select: none;
+}
+
+.spelling-bubble[hidden] {
+  display: none;
+}
+
+.spelling-bubble strong {
+  max-width: 160px;
+  padding: 0 6px;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spelling-bubble button {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  font: inherit;
+}
+
+.spelling-bubble button:hover,
+.spelling-bubble button:focus-visible {
+  background: #f1f3f4;
+  outline: 0;
+}
+
+.spelling-bubble .spelling-primary {
+  font-weight: 700;
+}
+
+.spelling-empty {
+  padding: 0 5px;
+  color: #777;
+}
+
+.tab-overlay {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid #3a3a3a;
+  border-radius: 7px;
+  background: #1b1b1b;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 24%);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.tab-overlay.is-dragging {
+  cursor: grabbing;
+}
+
+.tab-overlay[hidden] {
+  display: none;
+}
+
+.tab-overlay button {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #f3f3f3;
+  cursor: pointer;
+  font: 13px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.tab-overlay button:hover,
+.tab-overlay button:focus-visible {
+  background: #303030;
+  outline: 0;
+}
+
+.tab-overlay button[aria-pressed="true"] {
+  color: #9ec2ff;
+}
+
+.board-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  pointer-events: none;
+  user-select: none;
+}
+
+.board-overlay[hidden] {
+  display: none;
+}
+
+.board-overlay-top,
+.board-overlay-side {
+  pointer-events: auto;
+  border-color: #343434;
+  background: #171a1b;
+  color: #f3f3f3;
+  box-shadow: 0 14px 32px rgb(0 0 0 / 24%);
+  font: 13px/1.25 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.board-overlay-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 42px;
+  padding: 0 14px;
+  border-bottom: 1px solid #343434;
+}
+
+.board-overlay-top strong {
+  font-weight: 600;
+}
+
+.board-overlay-top span {
+  color: #9c9c9c;
+  font-size: 12px;
+}
+
+.board-history-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.board-history-button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 28px;
+  border: 1px solid #3b526f;
+  border-radius: 5px;
+  background: transparent;
+  color: #9ec2ff;
+  cursor: pointer;
+  font: 18px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.board-history-button:disabled {
+  border-color: #343434;
+  color: #5f6468;
+  cursor: default;
+}
+
+.board-history-button:not(:disabled):hover,
+.board-history-button:not(:disabled):focus-visible {
+  background: #272b2d;
+  outline: 0;
+}
+
+.board-overlay-side {
+  position: fixed;
+  top: 42px;
+  left: 0;
+  bottom: 0;
+  width: 292px;
+  padding: 12px;
+  overflow: auto;
+  border-right: 1px solid #343434;
+}
+
+.board-new-button,
+.board-select,
+.board-pin {
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.board-new-button {
+  width: 100%;
+  height: 34px;
+  margin-bottom: 10px;
+  border: 1px solid #3b526f;
+  color: #9ec2ff;
+  text-align: left;
+}
+
+.board-new-button,
+.board-select {
+  padding: 0 10px;
+}
+
+.board-list {
+  display: grid;
+  gap: 4px;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  transition: transform 0.16s ease;
+}
+
+.board-row.is-current {
+  background: rgb(106 167 255 / 15%);
+}
+
+.board-row.is-selected {
+  background: rgb(106 167 255 / 30%);
+}
+
+.board-row.is-cursor {
+  box-shadow: inset 0 0 0 1.5px rgb(123 178 255 / 85%);
+}
+
+.board-row.is-dragging {
+  position: relative;
+  z-index: 5;
+  transition: none;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 50%);
+  background: #20262b;
+  cursor: grabbing;
+}
+
+.board-row.is-dragging .board-select {
+  cursor: grabbing;
+}
+
+.board-select {
+  min-width: 0;
+  height: 34px;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.board-rename-form {
+  min-width: 0;
+}
+
+.board-rename-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #3b526f;
+  border-radius: 5px;
+  background: #111516;
+  color: #f3f3f3;
+  font: inherit;
+}
+
+.board-rename-input:focus {
+  border-color: #6aa7ff;
+  outline: 0;
+}
+
+.board-pin {
+  height: 26px;
+  padding: 0 8px;
+  color: #aeb4bb;
+  font-size: 12px;
+}
+
+.board-pin[aria-pressed="true"] {
+  color: #9ec2ff;
+}
+
+.board-new-button:hover,
+.board-new-button:focus-visible,
+.board-select:hover,
+.board-select:focus-visible,
+.board-pin:hover,
+.board-pin:focus-visible {
+  background: #272b2d;
+  outline: 0;
+}
+
+.board-context-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 168px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #343434;
+  border-radius: 8px;
+  background: #171a1b;
+  color: #f3f3f3;
+  box-shadow: 0 14px 32px rgb(0 0 0 / 38%);
+  font: 13px/1.25 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+}
+
+.board-context-item {
+  appearance: none;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.board-context-item:hover,
+.board-context-item:focus-visible {
+  background: #272b2d;
+  outline: 0;
+}
+
+.board-context-item.is-danger {
+  color: #ff7b72;
+}
+
+.board-context-item.is-danger:hover,
+.board-context-item.is-danger:focus-visible {
+  background: rgb(255 80 75 / 16%);
+}
+
+.find-bar,
+.title-bar {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #2f2f2f;
+  border-radius: 4px;
+  background: #1b1b1b;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 18%);
+  cursor: default;
+  user-select: none;
+}
+
+.title-bar {
+  left: 12px;
+  right: auto;
+}
+
+.find-bar[hidden],
+.title-bar[hidden] {
+  display: none;
+}
+
+.find-bar input,
+.title-bar input {
+  width: 190px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  background: #111;
+  color: #fff;
+  font: 13px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0;
+}
+
+.title-bar input {
+  width: 230px;
+}
+
+.find-bar input:focus,
+.title-bar input:focus {
+  outline-color: #6aa7ff;
+}
+
+.find-count {
+  min-width: 38px;
+  color: #e7d36a;
+  font: 12px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  text-align: center;
+}
+
+.find-bar button,
+.title-bar button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: #d7d7d7;
+  cursor: pointer;
+  font: 15px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.find-bar button:hover,
+.find-bar button:focus-visible,
+.title-bar button:hover,
+.title-bar button:focus-visible {
+  background: #303030;
+  color: #fff;
+  outline: 0;
+}
+
+.find-bar.is-empty .find-count {
+  color: #8c8c8c;
+}
+
+.board-item {
+  position: absolute;
+}
+
+.note {
+  width: max-content;
+  min-width: 1ch;
+  max-width: none;
+  min-height: 1.2em;
+  padding: 1px 2px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #111;
+  caret-color: #111;
+  cursor: text;
+  font: 18px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  user-select: text;
+}
+
+.image-note {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 320px;
+  height: 180px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+  overflow: visible;
+  user-select: none;
+  transform-origin: center;
+}
+
+.image-note img {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.image-controls {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.image-note.is-selected .image-controls {
+  display: block;
+}
+
+.image-control {
+  position: absolute;
+  z-index: 2;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: 1px solid #3478f6;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+  pointer-events: auto;
+}
+
+.image-rotate-control {
+  top: -34px;
+  right: -34px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: #3478f6;
+  font-size: 19px;
+  line-height: 1;
+  cursor: grab;
+}
+
+.image-mirror-control {
+  top: -28px;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  color: #3478f6;
+  font: 700 10px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: pointer;
+}
+
+.image-mirror-horizontal-control {
+  left: -7px;
+}
+
+.image-mirror-vertical-control {
+  left: 14px;
+}
+
+.image-resize-control {
+  right: -7px;
+  bottom: -7px;
+  border-radius: 2px;
+  cursor: nwse-resize;
+}
+
+.image-crop-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.image-crop-control {
+  left: -7px;
+  bottom: -7px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  color: #3478f6;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.image-crop-editor {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.image-note.is-cropping .image-crop-editor {
+  display: block;
+}
+
+.image-note.is-cropping .image-controls {
+  display: none;
+}
+
+.crop-rubber {
+  position: absolute;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 9999px rgb(0 0 0 / 45%);
+  pointer-events: none;
+}
+
+/* --- markdown notes --- */
+
+.markdown-note {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #d4d8dd;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 12%);
+  overflow: hidden;
+}
+
+/* Bottom-right grip — drag to resize the markdown note. */
+.md-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  touch-action: none;
+  background: linear-gradient(
+    135deg,
+    transparent 0 46%,
+    #c2c8cf 46% 58%,
+    transparent 58% 70%,
+    #c2c8cf 70% 82%,
+    transparent 82%
+  );
+}
+
+.md-resize-handle:hover {
+  background: linear-gradient(
+    135deg,
+    transparent 0 46%,
+    #6aa7ff 46% 58%,
+    transparent 58% 70%,
+    #6aa7ff 70% 82%,
+    transparent 82%
+  );
+}
+
+.md-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 5px 6px;
+  background: #f1f3f5;
+  border-bottom: 1px solid #e4e8ec;
+  cursor: grab;
+}
+
+.md-tab {
+  border: 0;
+  padding: 3px 11px;
+  border-radius: 5px;
+  background: transparent;
+  color: #6b747d;
+  font: 600 11px/1 "Segoe UI", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.md-tab.is-active {
+  background: #fff;
+  color: #1f2933;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 14%);
+}
+
+.md-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 16px;
+  overflow: auto;
+  color: #222;
+}
+
+.markdown-note[data-md-mode="source"] .md-body {
+  white-space: pre-wrap;
+  font: 13px/1.55 "Cascadia Mono", Consolas, monospace;
+  color: #2b3138;
+}
+
+.md-body h1,
+.md-body h2,
+.md-body h3,
+.md-body h4 {
+  margin: 0.7em 0 0.35em;
+  line-height: 1.25;
+  color: #1f2933;
+}
+
+.md-body h1 {
+  font-size: 20px;
+}
+.md-body h2 {
+  font-size: 17px;
+}
+.md-body h3 {
+  font-size: 15px;
+}
+.md-body h4 {
+  font-size: 13px;
+}
+
+.md-body p {
+  margin: 0.5em 0;
+  line-height: 1.55;
+}
+
+.md-body ul,
+.md-body ol {
+  margin: 0.5em 0;
+  padding-left: 1.4em;
+}
+
+.md-body li {
+  margin: 0.2em 0;
+  line-height: 1.5;
+}
+
+.md-body code {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 0.9em;
+  background: #f1f3f5;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.md-body pre {
+  background: #f1f3f5;
+  padding: 10px 12px;
+  border-radius: 6px;
+  overflow: auto;
+}
+
+.md-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.md-body blockquote {
+  margin: 0.5em 0;
+  padding-left: 12px;
+  border-left: 3px solid #c7ccd1;
+  color: #5a636c;
+}
+
+.md-body table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 12px;
+}
+
+.md-body th,
+.md-body td {
+  border: 1px solid #d4d8dd;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.md-body th {
+  background: #f1f3f5;
+}
+
+.md-body a {
+  color: #3478f6;
+}
+
+.md-body hr {
+  border: 0;
+  border-top: 1px solid #e4e8ec;
+  margin: 0.8em 0;
+}
+
+.board-item.is-selected {
+  outline: 1px solid #3478f6;
+  background: rgb(52 120 246 / 8%);
+}
+
+.image-note.is-selected {
+  background: transparent;
+}
+
+.board-item.is-selected:hover {
+  cursor: grab;
+}
+
+.note::selection,
+.note *::selection {
+  background: #cfe3ff;
+}
+
+.server-error {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #8a4b2d;
+  background: #fff;
+}

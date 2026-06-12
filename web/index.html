@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Infinite Paper</title>
+  </head>
+  <body>
+    <section id="auth-screen" class="auth-screen" hidden>
+      <div class="auth-panel">
+        <h1>Infinite Paper</h1>
+        <p>Sign in to keep your board on the web and invite collaborators.</p>
+        <button id="google-login" type="button">Continue with Google</button>
+        <form id="magic-link-form">
+          <input id="magic-link-email" type="email" autocomplete="email" placeholder="email@example.com" required>
+          <button type="submit">Send email link</button>
+        </form>
+        <p id="auth-message" class="auth-message" role="status"></p>
+      </div>
+    </section>
+
+    <section id="app-shell" class="app-shell" hidden>
+      <header id="app-toolbar" class="app-toolbar">
+        <div>
+          <strong id="board-title">Infinite Paper</strong>
+          <span id="sync-status">Connecting</span>
+        </div>
+        <div class="toolbar-actions">
+          <button id="import-open" type="button">Import</button>
+          <button id="share-open" type="button">Share</button>
+          <button id="sign-out" type="button">Sign out</button>
+        </div>
+      </header>
+
+      <form id="find-bar" class="find-bar" role="search" aria-label="Find text" hidden>
+        <input id="find-input" type="search" autocomplete="off" spellcheck="false" aria-label="Find text">
+        <span id="find-count" class="find-count" aria-live="polite">0/0</span>
+        <button id="find-prev" type="button" aria-label="Previous match" title="Previous match">^</button>
+        <button id="find-next" type="button" aria-label="Next match" title="Next match">v</button>
+        <button id="find-close" type="button" aria-label="Close find" title="Close find">x</button>
+      </form>
+
+      <form id="title-bar" class="title-bar" aria-label="Rename tab" hidden>
+        <input id="title-input" type="text" autocomplete="off" spellcheck="false" maxlength="80" aria-label="Tab name">
+        <button id="title-save" type="submit" aria-label="Save tab name" title="Save tab name">ok</button>
+        <button id="title-close" type="button" aria-label="Close rename" title="Close rename">x</button>
+      </form>
+
+      <aside id="share-panel" class="side-panel" hidden>
+        <div class="side-panel-header">
+          <h2>Share board</h2>
+          <button id="share-close" type="button" aria-label="Close sharing">x</button>
+        </div>
+        <form id="invite-form">
+          <input id="invite-email" type="email" autocomplete="email" placeholder="collaborator@email.com" required>
+          <button type="submit">Invite editor</button>
+        </form>
+        <p id="invite-message" role="status"></p>
+        <div id="member-list" class="member-list"></div>
+      </aside>
+
+      <aside id="import-panel" class="side-panel" hidden>
+        <div class="side-panel-header">
+          <h2>Import local notes</h2>
+          <button id="import-close" type="button" aria-label="Close import">x</button>
+        </div>
+        <p>Import from same-origin browser storage when available, or choose a backup JSON file.</p>
+        <button id="import-local" type="button">Import browser board</button>
+        <label class="file-import">
+          Import backup JSON
+          <input id="import-file" type="file" accept="application/json,.json">
+        </label>
+        <button id="import-skip" type="button">Do not ask again</button>
+        <p id="import-message" role="status"></p>
+      </aside>
+
+      <div id="selection-box" class="selection-box" hidden></div>
+      <main id="viewport" aria-label="Infinite writing paper">
+        <section id="paper" aria-live="polite"></section>
+      </main>
+    </section>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

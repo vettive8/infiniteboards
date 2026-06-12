@@ -1,0 +1,590 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+.auth-screen,
+.app-shell {
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+.auth-screen[hidden],
+.app-shell[hidden],
+.side-panel[hidden] {
+  display: none;
+}
+
+.auth-screen {
+  display: grid;
+  place-items: center;
+  background: #f7f7f4;
+  color: #111;
+  font: 14px/1.4 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.auth-panel {
+  width: min(380px, calc(100vw - 32px));
+  padding: 22px;
+  border: 1px solid #deded8;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 18px 44px rgb(0 0 0 / 10%);
+}
+
+.auth-panel h1 {
+  margin: 0 0 8px;
+  font: 600 24px/1.1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.auth-panel p {
+  margin: 0 0 16px;
+}
+
+.auth-panel button,
+.auth-panel input,
+.app-toolbar button,
+.side-panel button,
+.side-panel input {
+  height: 32px;
+  border: 1px solid #cfcfca;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  font: 13px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.auth-panel button,
+.app-toolbar button,
+.side-panel button {
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+#google-login {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.auth-panel form,
+.side-panel form {
+  display: flex;
+  gap: 6px;
+}
+
+.auth-panel input,
+.side-panel input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.auth-message {
+  min-height: 18px;
+  color: #555;
+}
+
+.app-toolbar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  top: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.app-toolbar > * {
+  pointer-events: auto;
+}
+
+.app-toolbar strong,
+.app-toolbar span {
+  display: inline-block;
+  padding: 4px 7px;
+  border: 1px solid #e2e2dc;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 88%);
+  font: 12px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.app-toolbar span {
+  color: #666;
+}
+
+.app-toolbar span.is-error {
+  color: #9b1c1c;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.side-panel {
+  position: fixed;
+  top: 58px;
+  right: 12px;
+  z-index: 35;
+  width: min(360px, calc(100vw - 24px));
+  padding: 14px;
+  border: 1px solid #deded8;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 18px 44px rgb(0 0 0 / 14%);
+  font: 13px/1.35 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.side-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.side-panel h2 {
+  margin: 0;
+  font: 600 16px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.member-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.member-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid #eee;
+}
+
+.file-import {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.file-import input {
+  height: auto;
+  padding: 6px;
+}
+
+#viewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #fff;
+  cursor: text;
+  touch-action: none;
+  user-select: none;
+}
+
+#viewport.is-panning {
+  cursor: grabbing;
+}
+
+#viewport.is-selecting {
+  cursor: crosshair;
+}
+
+#viewport.is-moving-selection {
+  cursor: grabbing;
+}
+
+#viewport.is-transforming-image {
+  cursor: grabbing;
+}
+
+#paper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  transform-origin: 0 0;
+}
+
+.selection-box {
+  position: fixed;
+  z-index: 15;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: 1px solid #3478f6;
+  background: rgb(52 120 246 / 10%);
+  pointer-events: none;
+}
+
+.selection-box[hidden] {
+  display: none;
+}
+
+.paste-status {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 25;
+  padding: 6px 9px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 12%);
+  font: 12px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  pointer-events: none;
+}
+
+.paste-status.is-error {
+  border-color: #e3a4a4;
+  color: #9b1c1c;
+}
+
+.paste-status[hidden] {
+  display: none;
+}
+
+::highlight(find-active) {
+  background: #f4d84e;
+  color: #111;
+}
+
+::highlight(app-spell-error) {
+  text-decoration: underline wavy #d93025;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.spelling-bubble {
+  position: fixed;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: min(520px, calc(100vw - 16px));
+  padding: 6px;
+  border: 1px solid #d8d8d8;
+  border-radius: 7px;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 18%);
+  font: 14px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: default;
+  user-select: none;
+}
+
+.spelling-bubble[hidden] {
+  display: none;
+}
+
+.spelling-bubble strong {
+  max-width: 160px;
+  padding: 0 6px;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spelling-bubble button {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  font: inherit;
+}
+
+.spelling-bubble button:hover,
+.spelling-bubble button:focus-visible {
+  background: #f1f3f4;
+  outline: 0;
+}
+
+.spelling-bubble .spelling-primary {
+  font-weight: 700;
+}
+
+.spelling-empty {
+  padding: 0 5px;
+  color: #777;
+}
+
+.tab-overlay {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid #3a3a3a;
+  border-radius: 7px;
+  background: #1b1b1b;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 24%);
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+.tab-overlay[hidden] {
+  display: none;
+}
+
+.tab-overlay button {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #f3f3f3;
+  cursor: pointer;
+  font: 13px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.tab-overlay button:hover,
+.tab-overlay button:focus-visible {
+  background: #303030;
+  outline: 0;
+}
+
+.tab-overlay button[aria-pressed="true"] {
+  color: #9ec2ff;
+}
+
+.find-bar,
+.title-bar {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #2f2f2f;
+  border-radius: 4px;
+  background: #1b1b1b;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 18%);
+  cursor: default;
+  user-select: none;
+}
+
+.title-bar {
+  left: 12px;
+  right: auto;
+}
+
+.find-bar[hidden],
+.title-bar[hidden] {
+  display: none;
+}
+
+.find-bar input,
+.title-bar input {
+  width: 190px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  background: #111;
+  color: #fff;
+  font: 13px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0;
+}
+
+.title-bar input {
+  width: 230px;
+}
+
+.find-bar input:focus,
+.title-bar input:focus {
+  outline-color: #6aa7ff;
+}
+
+.find-count {
+  min-width: 38px;
+  color: #e7d36a;
+  font: 12px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  text-align: center;
+}
+
+.find-bar button,
+.title-bar button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: #d7d7d7;
+  cursor: pointer;
+  font: 15px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.find-bar button:hover,
+.find-bar button:focus-visible,
+.title-bar button:hover,
+.title-bar button:focus-visible {
+  background: #303030;
+  color: #fff;
+  outline: 0;
+}
+
+.find-bar.is-empty .find-count {
+  color: #8c8c8c;
+}
+
+.board-item {
+  position: absolute;
+}
+
+.note {
+  width: max-content;
+  min-width: 1ch;
+  max-width: none;
+  min-height: 1.2em;
+  padding: 1px 2px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #111;
+  caret-color: #111;
+  cursor: text;
+  font: 18px/1.2 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  user-select: text;
+}
+
+.image-note {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 320px;
+  height: 180px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+  overflow: visible;
+  user-select: none;
+  transform-origin: center;
+}
+
+.image-note img {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.image-controls {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.image-note.is-selected .image-controls {
+  display: block;
+}
+
+.image-control {
+  position: absolute;
+  z-index: 2;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: 1px solid #3478f6;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+  pointer-events: auto;
+}
+
+.image-rotate-control {
+  top: -28px;
+  right: -7px;
+  cursor: grab;
+}
+
+.image-mirror-control {
+  top: -28px;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  color: #3478f6;
+  font: 700 10px/1 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: pointer;
+}
+
+.image-mirror-horizontal-control {
+  left: -7px;
+}
+
+.image-mirror-vertical-control {
+  left: 14px;
+}
+
+.image-resize-control {
+  right: -7px;
+  bottom: -7px;
+  border-radius: 2px;
+  cursor: nwse-resize;
+}
+
+.board-item.is-selected {
+  outline: 1px solid #3478f6;
+  background: rgb(52 120 246 / 8%);
+}
+
+.image-note.is-selected {
+  background: transparent;
+}
+
+.board-item.is-selected:hover {
+  cursor: grab;
+}
+
+.note::selection,
+.note *::selection {
+  background: #cfe3ff;
+}
